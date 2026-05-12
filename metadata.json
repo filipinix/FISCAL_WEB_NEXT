@@ -1,0 +1,8 @@
+{
+  "name": "Fiscal Web Next",
+  "description": "Professional local fiscal management system for NFe/NFCe automation and branch monitoring.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

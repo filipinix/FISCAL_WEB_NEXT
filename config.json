@@ -1,0 +1,21 @@
+{
+  "filiais": [
+    {
+      "id": 1,
+      "nome": "Loja Matriz",
+      "api_url": "http://localhost:3001"
+    },
+    {
+      "id": 2,
+      "nome": "Filial Sul",
+      "api_url": "http://localhost:3002"
+    }
+  ],
+  "smtp": {
+    "host": "localhost",
+    "port": 1025,
+    "user": "fiscal@example.com",
+    "pass": "secret"
+  },
+  "export_dir": "./exports"
+}
