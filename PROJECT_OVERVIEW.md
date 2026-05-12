@@ -37,6 +37,19 @@ Sugestões para as próximas fases:
 3. **Download Real de XML**: Atualmente o download em `/relatorios` é simulado. É necessário integrar com um serviço de bucket (S3/Cloud Storage) ou gerar o ZIP em memória no backend.
 4. **Auth JWT**: Trocar o login simples por um sistema de Token JWT robusto.
 
+## 🔌 Integração com API Python (FastAPI)
+O frontend foi atualizado para ser 100% compatível com a API Python que você forneceu.
+As chaves de dados agora utilizam o padrão da sua API:
+- `numero_nfce` em vez de `numero`
+- `chave_acesso` em vez de `chave`
+- `valor_total` em vez de `valor`
+- `data_emissao` em vez de `emissao`
+- `ativa` (booleano) para o status da nota.
+
+### Como conectar sua API real:
+1. No arquivo `data/config.json`, mude a `api_url` para o endereço onde sua API Python está rodando (ex: `http://localhost:8000`).
+2. O Hub (`server.ts`) fará o roteamento automático.
+
 ## 💻 Execução Local
 1. Instale o Node.js.
 2. Execute o arquivo `INSTALL.bat` no Windows ou `npm install && npm start` no terminal.
