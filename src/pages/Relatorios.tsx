@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import api from "../lib/api";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
-import { Button } from "../components/ui/button";
+import api from "@/lib/api";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { 
   Download, Send, RefreshCcw, 
   FileDown, Search, FileJson, FileSpreadsheet,
@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { 
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
-} from "../components/ui/select";
+} from "@/components/ui/select";
 import { toast } from "sonner";
 
 export default function Relatorios() {

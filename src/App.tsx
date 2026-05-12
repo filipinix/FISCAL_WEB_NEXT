@@ -10,8 +10,9 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Filiais from "./pages/Filiais";
 import Relatorios from "./pages/Relatorios";
+import Configuracoes from "./pages/Configuracoes";
 import Sidebar from "./components/Sidebar";
-import { Toaster } from "./components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("token");
@@ -58,6 +59,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <Relatorios />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/config"
+              element={
+                <ProtectedRoute>
+                  <Configuracoes />
                 </ProtectedRoute>
               }
             />

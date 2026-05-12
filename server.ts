@@ -116,6 +116,39 @@ async function startServer() {
     res.json({ success: true });
   });
 
+  // SMTP Proxy/Management
+  app.get("/api/smtp", authenticateToken, (req, res) => {
+    const config = getConfig();
+    res.json(config.smtp ? [config.smtp] : []);
+  });
+
+  app.get("/api/smtp/:id", authenticateToken, (req, res) => {
+    const config = getConfig();
+    // For now we only support one global SMTP config, or we could map by ID
+    res.json(config.smtp || null);
+  });
+
+  app.post("/api/smtp", authenticateToken, (req, res) => {
+    const config = getConfig();
+    config.smtp = req.body;
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+    res.json({ success: true, id: req.body.id });
+  });
+
+  app.put("/api/smtp/:id", authenticateToken, (req, res) => {
+    const config = getConfig();
+    config.smtp = req.body;
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+    res.json({ success: true });
+  });
+
+  app.delete("/api/smtp/:id", authenticateToken, (req, res) => {
+    const config = getConfig();
+    config.smtp = null;
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+    res.json({ success: true });
+  });
+
   // Data Proxy (Simulating calls to branch APIs)
   app.get("/api/filial/:id/data", authenticateToken, (req, res) => {
     const id = parseInt(req.params.id);

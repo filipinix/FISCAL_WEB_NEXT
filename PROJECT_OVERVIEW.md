@@ -27,6 +27,7 @@ O sistema não possui um banco de dados central pesado. Ele utiliza um arquivo d
   - `Dashboard.tsx`: Visualização de KPIS e Gráficos de faturamento.
   - `Filiais.tsx`: Gerenciamento dos endpoints (URLs) de cada unidade.
   - `Relatorios.tsx`: Ferramenta para gerar pacotes ZIP/XML por período.
+  - `Configuracoes.tsx`: Gestão de parâmetros globais e servidor SMTP.
 - `/src/components`: Componentes reutilizáveis (Sidebar, Layout, UI).
 - `/server.ts`: O "cérebro" do sistema que gerencia as chamadas entre o Hub e as filiais.
 
@@ -45,6 +46,8 @@ As chaves de dados agora utilizam o padrão da sua API:
 - `valor_total` em vez de `valor`
 - `data_emissao` em vez de `emissao`
 - `ativa` (booleano) para o status da nota.
+
+Além disso, a API agora suporta o CRUD completo de configurações SMTP (`/api/smtp`), permitindo que o Hub centralize as credenciais de disparo de e-mail.
 
 ### Como conectar sua API real:
 1. No arquivo `data/config.json`, mude a `api_url` para o endereço onde sua API Python está rodando (ex: `http://localhost:8000`).
