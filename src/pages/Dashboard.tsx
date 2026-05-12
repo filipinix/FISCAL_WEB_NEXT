@@ -59,8 +59,8 @@ export default function Dashboard() {
   ];
 
   const chartData = data.slice(0, 15).map((d, i) => ({
-    name: `${d.numero}`,
-    valor: parseFloat(d.valor)
+    name: `${d.numero_nfce}`,
+    valor: parseFloat(d.valor_total)
   })).reverse();
 
   return (
@@ -80,7 +80,7 @@ export default function Dashboard() {
               <SelectTrigger className="w-[240px] h-12 bg-card border-white/5 rounded-xl shadow-lg ring-0 focus:ring-1 focus:ring-primary/50">
                 <SelectValue placeholder="Selecione..." />
               </SelectTrigger>
-              <SelectContent className="bg-card border-white/10 rounded-xl">
+              <SelectContent className="bg-card border-white/10 rounded-2xl">
                 {filiais.map(f => (
                   <SelectItem key={f.id} value={f.id.toString()} className="focus:bg-primary/10 focus:text-primary transition-colors">
                     {f.nome}
@@ -248,23 +248,23 @@ export default function Dashboard() {
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                      <span className="text-xs font-bold uppercase">{row.status}</span>
+                      <span className="text-xs font-bold uppercase">{row.ativa ? 'Ativa' : 'Inativa'}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5">
                     <div>
-                      <p className="text-sm font-bold">NFC-e Nº {row.numero}</p>
-                      <p className="text-[10px] font-mono opacity-40">Série {row.serie}</p>
+                      <p className="text-sm font-bold">NFC-e Nº {row.numero_nfce}</p>
+                      <p className="text-[10px] font-mono opacity-40">Série {row.serie} | Mod {row.modelo}</p>
                     </div>
                   </td>
                   <td className="px-8 py-5 font-mono text-[10px] opacity-40 group-hover:opacity-100 transition-opacity">
-                    {row.chave}
+                    {row.chave_acesso}
                   </td>
                   <td className="px-8 py-5 text-sm">
-                    {new Date(row.emissao).toLocaleDateString()}
+                    {new Date(row.data_emissao).toLocaleDateString()}
                   </td>
                   <td className="px-8 py-5 text-right font-bold text-emerald-400">
-                    R$ {row.valor}
+                    R$ {row.valor_total}
                   </td>
                 </tr>
               ))}

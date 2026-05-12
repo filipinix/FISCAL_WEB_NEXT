@@ -1,45 +1,41 @@
 -- EXECUTAR NO MYSQL DAS FILIAIS
--- Estrutura mínima para integração com Fiscal Web Next
+-- Estrutura compatível com API Fiscal em Python (FastAPI)
 
-CREATE DATABASE IF NOT EXISTS fiscal_local;
-USE fiscal_local;
-
--- Tabela de Configurações da Filial
-CREATE TABLE IF NOT EXISTS config_api (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    filial_id INT NOT NULL,
-    chave_api VARCHAR(255),
-    ultima_sincronizacao DATETIME
-);
+CREATE DATABASE IF NOT EXISTS fiscal;
+USE fiscal;
 
 -- Tabela de NFC-e Autorizadas
-CREATE TABLE IF NOT EXISTS nfc_autorizadas (
+CREATE TABLE IF NOT EXISTS nfce_autorizadas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    chave VARCHAR(44) NOT NULL UNIQUE,
-    numero INT NOT NULL,
+    chave_acesso VARCHAR(44) NOT NULL UNIQUE,
+    modelo INT DEFAULT 65,
+    numero_nfce INT NOT NULL,
     serie INT NOT NULL,
     data_emissao DATETIME NOT NULL,
     valor_total DECIMAL(10,2) NOT NULL,
-    xml_caminho VARCHAR(255),
-    status VARCHAR(20) DEFAULT 'AUTORIZADA',
+    ativa TINYINT(1) DEFAULT 1,
+    protocolo_autorizacao VARCHAR(255),
+    data_autorizacao DATETIME,
+    xml_base64 LONGTEXT, -- Armazenado apenas para download individual
     INDEX (data_emissao),
-    INDEX (numero)
+    INDEX (numero_nfce)
 );
 
--- Tabela de NFC-e Canceladas
-CREATE TABLE IF NOT EXISTS nfc_canceladas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    chave VARCHAR(44) NOT NULL UNIQUE,
-    numero INT NOT NULL,
-    serie INT NOT NULL,
-    data_cancelamento DATETIME NOT NULL,
-    motivo TEXT,
-    INDEX (data_cancelamento)
+-- Tabela de Configurações SMTP
+CREATE TABLE IF NOT EXISTS smtp_config (
+    id INT PRIMARY KEY,
+    host VARCHAR(255) NOT NULL,
+    port INT NOT NULL,
+    user VARCHAR(255) NOT NULL,
+    pass VARCHAR(255) NOT NULL,
+    tls TINYINT(1) DEFAULT 1,
+    from_email VARCHAR(255) NOT NULL,
+    to_email VARCHAR(255) NOT NULL
 );
 
 -- SEED DATA (EXEMPLO)
-INSERT INTO nfc_autorizadas (chave, numero, serie, data_emissao, valor_total) 
+INSERT INTO nfce_autorizadas (chave_acesso, numero_nfce, serie, data_emissao, valor_total) 
 VALUES ('35260112345678000189550010000010011345678901', 1001, 1, NOW(), 150.50);
 
-INSERT INTO nfc_canceladas (chave, numero, serie, data_cancelamento, motivo)
-VALUES ('35260112345678000189550010000009911345678901', 999, 1, NOW(), 'Erro na forma de pagamento');
+INSERT INTO smtp_config (id, host, port, user, pass, from_email, to_email)
+VALUES (1, 'smtp.example.com', 587, 'fiscal@example.com', 'secret', 'fiscal@example.com', 'contabil@empresa.com');

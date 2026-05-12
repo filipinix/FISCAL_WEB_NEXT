@@ -35,34 +35,35 @@ function getConfig(): Config {
   return JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8"));
 }
 
-// Simulation Data for "Local" MySQL APIs
-// In a real scenario, these would be separate servers on branch IPs
+// Simulation Data for "Local" Python APIs
 const mockData: Record<number, any> = {
   1: {
-    autorizadas: Array.from({ length: 50 }, (_, i) => ({
+    nfce: Array.from({ length: 50 }, (_, i) => ({
       id: i + 1,
-      chave: `3526011234567800018955001${(i + 1000).toString().padStart(9, '0')}1345678901`,
-      numero: i + 1001,
+      chave_acesso: `3526011234567800018955001${(i + 1000).toString().padStart(9, '0')}1345678901`,
+      numero_nfce: i + 1001,
       serie: 1,
-      emissao: new Date(Date.now() - i * 3600000).toISOString(),
-      valor: (Math.random() * 500 + 50).toFixed(2),
-      status: "Autorizada"
+      modelo: 65,
+      data_emissao: new Date(Date.now() - i * 3600000).toISOString(),
+      valor_total: (Math.random() * 500 + 50).toFixed(2),
+      ativa: 1,
+      protocolo_autorizacao: "135260000001234",
+      data_autorizacao: new Date().toISOString()
     })),
-    canceladas: [
-      { id: 99, chave: "35260112345678000189550010000009911345678901", numero: 999, serie: 1, emissao: new Date().toISOString(), valor: "150.00", status: "Cancelada" }
-    ]
   },
   2: {
-    autorizadas: Array.from({ length: 30 }, (_, i) => ({
+    nfce: Array.from({ length: 30 }, (_, i) => ({
       id: i + 1,
-      chave: `3526018888888800018955001${(i + 2000).toString().padStart(9, '0')}1345678901`,
-      numero: i + 2001,
+      chave_acesso: `3526018888888800018955001${(i + 2000).toString().padStart(9, '0')}1345678901`,
+      numero_nfce: i + 2001,
       serie: 1,
-      emissao: new Date(Date.now() - i * 7200000).toISOString(),
-      valor: (Math.random() * 300 + 20).toFixed(2),
-      status: "Autorizada"
+      modelo: 65,
+      data_emissao: new Date(Date.now() - i * 7200000).toISOString(),
+      valor_total: (Math.random() * 300 + 20).toFixed(2),
+      ativa: 1,
+      protocolo_autorizacao: "135260000005555",
+      data_autorizacao: new Date().toISOString()
     })),
-    canceladas: []
   }
 };
 
@@ -120,11 +121,9 @@ async function startServer() {
     const id = parseInt(req.params.id);
     const type = req.query.type as string; // autorizadas, canceladas, etc.
     
-    // In a REAL system, this would use axios to fetch from Filial.api_url
-    // const filial = getConfig().filiais.find(f => f.id === id);
-    // const response = await axios.get(`${filial.api_url}/api/${type}`);
-    
-    const data = mockData[id] ? mockData[id][type] || [] : [];
+    // In a REAL system, this would use axios to fetch from your Python API
+    // GET filial.api_url/api/nfce
+    const data = mockData[id] ? mockData[id].nfce || [] : [];
     res.json(data);
   });
 
@@ -143,11 +142,11 @@ async function startServer() {
     const zipPath = path.join(exportDir, zipName);
     const zip = new AdmZip();
 
-    // Mock XML content
-    const data = mockData[filialId]?.autorizadas || [];
+    // Mapping to Python API field names
+    const data = mockData[filialId]?.nfce || [];
     data.forEach((note: any) => {
-      const xmlContent = `<?xml version="1.0" encoding="UTF-8"?><nfeProc><NFe><infNFe chNFe="${note.chave}"><ide><nNF>${note.numero}</nNF></ide></infNFe></NFe></nfeProc>`;
-      zip.addFile(`XML/${note.chave}.xml`, Buffer.from(xmlContent, "utf-8"));
+      const xmlContent = `<?xml version="1.0" encoding="UTF-8"?><nfeProc><NFe><infNFe chNFe="${note.chave_acesso}"><ide><nNF>${note.numero_nfce}</nNF></ide></infNFe></NFe></nfeProc>`;
+      zip.addFile(`XML/${note.chave_acesso}.xml`, Buffer.from(xmlContent, "utf-8"));
     });
 
     // Mock PDF Report
@@ -160,7 +159,7 @@ async function startServer() {
     doc.fontSize(12).text(`Período: ${period}`);
     doc.moveDown();
     data.forEach((n: any) => {
-      doc.text(`NFCe: ${n.numero} | Valor: R$ ${n.valor} | Chave: ${n.chave.substring(0, 15)}...`);
+      doc.text(`NFCe: ${n.numero_nfce} | Valor: R$ ${n.valor_total} | Chave: ${n.chave_acesso.substring(0, 15)}...`);
     });
     doc.end();
 
