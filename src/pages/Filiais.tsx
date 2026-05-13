@@ -78,7 +78,7 @@ export default function Filiais() {
                   </div>
                   <div>
                     <input 
-                      value={filial.nome} 
+                      value={filial.nome || ""} 
                       onChange={(e) => updateFilial(filial.id, "nome", e.target.value)}
                       className="bg-transparent border-none text-xl font-bold focus:outline-none focus:ring-0 w-full hover:bg-white/5 rounded px-1 transition-colors"
                     />
@@ -102,7 +102,7 @@ export default function Filiais() {
                   <div className="relative">
                     <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary opacity-40" />
                     <Input 
-                      value={filial.api_url} 
+                      value={filial.api_url || ""} 
                       onChange={(e) => updateFilial(filial.id, "api_url", e.target.value)}
                       className="rounded-2xl border-white/5 bg-white/5 font-mono text-xs h-12 pl-12"
                     />

@@ -30,7 +30,7 @@ export default function Configuracoes() {
     try {
       // Trying to get ID 1 by default as per the API simulation
       const { data } = await api.get("/api/smtp/1");
-      if (data) setSmtp(data);
+      if (data) setSmtp(prev => ({ ...prev, ...data }));
     } catch (err) {
       console.error("Erro ao carregar SMTP:", err);
       // If it fails (maybe 404), we keep the default state for creation
@@ -96,7 +96,7 @@ export default function Configuracoes() {
                     id="host"
                     placeholder="smtp.exemplo.com"
                     className="pl-10 h-12 bg-white/5 border-white/5 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all"
-                    value={smtp.host}
+                    value={smtp.host || ""}
                     onChange={(e) => setSmtp({ ...smtp, host: e.target.value })}
                     required
                   />
@@ -110,8 +110,8 @@ export default function Configuracoes() {
                   type="number"
                   placeholder="587"
                   className="h-12 bg-white/5 border-white/5 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all"
-                  value={smtp.port}
-                  onChange={(e) => setSmtp({ ...smtp, port: parseInt(e.target.value) })}
+                  value={smtp.port || ""}
+                  onChange={(e) => setSmtp({ ...smtp, port: parseInt(e.target.value) || 0 })}
                   required
                 />
               </div>
@@ -124,7 +124,7 @@ export default function Configuracoes() {
                     id="user"
                     placeholder="exemplo@gmail.com"
                     className="pl-10 h-12 bg-white/5 border-white/5 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all"
-                    value={smtp.user}
+                    value={smtp.user || ""}
                     onChange={(e) => setSmtp({ ...smtp, user: e.target.value })}
                     required
                   />
@@ -139,7 +139,7 @@ export default function Configuracoes() {
                     id="pass"
                     type="password"
                     className="pl-10 h-12 bg-white/5 border-white/5 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all"
-                    value={smtp.pass_}
+                    value={smtp.pass_ || ""}
                     onChange={(e) => setSmtp({ ...smtp, pass_: e.target.value })}
                     required
                   />
@@ -152,7 +152,7 @@ export default function Configuracoes() {
                   id="from"
                   placeholder="no-reply@empresa.com"
                   className="h-12 bg-white/5 border-white/5 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all"
-                  value={smtp.from_email}
+                  value={smtp.from_email || ""}
                   onChange={(e) => setSmtp({ ...smtp, from_email: e.target.value })}
                   required
                 />
@@ -164,7 +164,7 @@ export default function Configuracoes() {
                   id="to"
                   placeholder="fiscal@empresa.com"
                   className="h-12 bg-white/5 border-white/5 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all"
-                  value={smtp.to_email}
+                  value={smtp.to_email || ""}
                   onChange={(e) => setSmtp({ ...smtp, to_email: e.target.value })}
                   required
                 />
