@@ -16,12 +16,11 @@ Muitas empresas têm sistemas legados onde cada loja guarda seus dados de venda 
 - **Animações**: Motion (Animate.css).
 - **Ícones**: Lucide React.
 
-## 🏗️ Arquitetura de Dados
-O sistema não possui um banco de dados central pesado. Ele utiliza um arquivo de configuração (`data/config.json`) para mapear as filiais.
-- **Proxy Fiscal**: O backend em `server.ts` age como um túnel. Quando o usuário seleciona uma filial no Dashboard, o Hub faz uma requisição para a `api_url` cadastrada daquela unidade.
-- **Consistência**: O sistema espera que cada API de filial siga o mesmo contrato de interface para as rotas `/nfe` e `/health`.
+## 🏗️ Arquitetura e Regras de Negócio
+Para detalhes exaustivos sobre o processamento de XMLs, regras de cancelamento, detecção de faltantes e estrutura de banco de dados, consulte o arquivo:
+- [Documentação Técnica Completa (Versão Atual)](./DOCUMENTACAO.md)
 
-## 📂 Estrutura de Pastas
+## 📂 Estrutura de Pastas (Frontend Next)
 - `/src/pages`:
   - `Login.tsx`: Autenticação local (simulada por enquanto).
   - `Dashboard.tsx`: Visualização de KPIS e Gráficos de faturamento.

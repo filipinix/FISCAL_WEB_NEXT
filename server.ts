@@ -38,34 +38,60 @@ function getConfig(): Config {
 // Simulation Data for "Local" Python APIs
 const mockData: Record<number, any> = {
   1: {
-    nfce: Array.from({ length: 50 }, (_, i) => ({
-      id: i + 1,
-      chave_acesso: `3526011234567800018955001${(i + 1000).toString().padStart(9, '0')}1345678901`,
-      numero_nfce: i + 1001,
-      serie: 1,
-      modelo: 65,
-      data_emissao: new Date(Date.now() - i * 3600000).toISOString(),
-      valor_total: (Math.random() * 500 + 50).toFixed(2),
-      ativa: 1,
-      protocolo_autorizacao: "135260000001234",
-      data_autorizacao: new Date().toISOString()
-    })),
+    nfce: [
+      ...Array.from({ length: 20 }, (_, i) => ({
+        id: i + 1,
+        chave_acesso: `3526011234567800018955001${(i + 1001).toString().padStart(9, '0')}1345678901`,
+        numero_nfce: i + 1001,
+        serie: 1,
+        modelo: 65,
+        data_emissao: new Date(Date.now() - i * 3600000).toISOString(),
+        valor_total: (Math.random() * 500 + 50).toFixed(2),
+        ativa: 1,
+      })),
+      // Missing 1021 to 1023
+      ...Array.from({ length: 10 }, (_, i) => ({
+        id: i + 21,
+        chave_acesso: `3526011234567800018955001${(i + 1024).toString().padStart(9, '0')}1345678901`,
+        numero_nfce: i + 1024,
+        serie: 1,
+        modelo: 65,
+        data_emissao: new Date(Date.now() - (i + 25) * 3600000).toISOString(),
+        valor_total: (Math.random() * 500 + 50).toFixed(2),
+        ativa: 1,
+      }))
+    ],
   },
   2: {
     nfce: Array.from({ length: 30 }, (_, i) => ({
       id: i + 1,
-      chave_acesso: `3526018888888800018955001${(i + 2000).toString().padStart(9, '0')}1345678901`,
+      chave_acesso: `3526018888888800018955001${(i + 2001).toString().padStart(9, '0')}1345678901`,
       numero_nfce: i + 2001,
       serie: 1,
       modelo: 65,
       data_emissao: new Date(Date.now() - i * 7200000).toISOString(),
       valor_total: (Math.random() * 300 + 20).toFixed(2),
       ativa: 1,
-      protocolo_autorizacao: "135260000005555",
-      data_autorizacao: new Date().toISOString()
     })),
   }
 };
+
+let auditLogs: any[] = [
+  { id: 1, action: "LOGIN", user: "admin", detail: "Autenticação realizada com sucesso", timestamp: new Date(Date.now() - 3600000).toISOString(), type: "info" },
+  { id: 2, action: "CONFIG", user: "admin", detail: "Nova unidade vinculada: Matriz São Paulo", timestamp: new Date(Date.now() - 7200000).toISOString(), type: "success" },
+];
+
+function addLog(action: string, user: string, detail: string, type: string = "info") {
+  auditLogs.unshift({
+    id: Date.now(),
+    action,
+    user,
+    detail,
+    timestamp: new Date().toISOString(),
+    type
+  });
+  if (auditLogs.length > 100) auditLogs.pop();
+}
 
 async function startServer() {
   const app = express();
@@ -93,15 +119,22 @@ async function startServer() {
     // Simple mock user
     if (username === "admin" && password === "admin") {
       const token = jwt.sign({ username: "admin", role: "admin" }, SECRET, { expiresIn: "8h" });
+      addLog("LOGIN", "admin", "Autenticação via painel web", "info");
       res.cookie("token", token, { httpOnly: true });
       return res.json({ token, user: { username: "admin", role: "admin" } });
     }
+    addLog("LOGIN_FAIL", (username || "unknown"), "Tentativa de acesso negada", "error");
     res.status(401).json({ error: "Invalid credentials" });
   });
 
   app.post("/api/auth/logout", (req, res) => {
     res.clearCookie("token");
     res.json({ success: true });
+  });
+
+  // Logs
+  app.get("/api/logs", authenticateToken, (req, res) => {
+    res.json(auditLogs);
   });
 
   // Config / Branches
@@ -113,6 +146,7 @@ async function startServer() {
     const config = getConfig();
     config.filiais = req.body;
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+    addLog("CONFIG", "admin", `Lista de filiais atualizada (${req.body.length} unidades)`, "success");
     res.json({ success: true });
   });
 
@@ -132,6 +166,7 @@ async function startServer() {
     const config = getConfig();
     config.smtp = req.body;
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+    addLog("SMTP", "admin", `Configuração de e-mail atualizada (${req.body.host})`, "warning");
     res.json({ success: true, id: req.body.id });
   });
 
@@ -160,9 +195,53 @@ async function startServer() {
     res.json(data);
   });
 
+  app.get("/api/filial/:id/faltantes", authenticateToken, (req, res) => {
+    const id = parseInt(req.params.id);
+    const notes = mockData[id]?.nfce || [];
+    
+    if (notes.length === 0) return res.json([]);
+
+    // Logic for finding gaps in sequence per model+serie
+    const groups: Record<string, number[]> = {};
+    notes.forEach((n: any) => {
+      const key = `${n.modelo}_${n.serie}`;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(n.numero_nfce);
+    });
+
+    const faltantes: any[] = [];
+    Object.entries(groups).forEach(([key, nums]) => {
+      const [modelo, serie] = key.split("_");
+      const min = Math.min(...nums);
+      const max = Math.max(...nums);
+      const gaps: number[] = [];
+
+      for (let i = min; i <= max; i++) {
+        if (!nums.includes(i)) {
+          gaps.push(i);
+        }
+      }
+
+      if (gaps.length > 0) {
+        faltantes.push({
+          modelo,
+          serie,
+          min,
+          max,
+          encontradas: nums.length,
+          faltantesCount: gaps.length,
+          lista: gaps
+        });
+      }
+    });
+
+    res.json(faltantes);
+  });
+
   // Export
   app.post("/api/export", authenticateToken, async (req, res) => {
     const { filialId, period, types } = req.body;
+    addLog("EXPORT", "admin", `Geração de pacote fiscal: Unidade ${filialId} - ${period}`, "info");
     const config = getConfig();
     const exportDir = path.join(process.cwd(), config.export_dir || "exports");
     

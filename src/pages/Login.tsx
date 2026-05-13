@@ -47,16 +47,15 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
           <p className="text-muted-foreground">Sistema de gestão fiscal inteligente</p>
         </div>
 
-        <Card className="glass-card border-white/5 rounded-3xl overflow-hidden shadow-2xl">
-          <CardContent className="p-8">
-            <form onSubmit={handleLogin} className="space-y-6">
+        <div className="bg-card border-white/5 rounded-3xl overflow-hidden shadow-2xl p-8">
+          <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Usuário</label>
                 <div className="relative">
-                  <Input
+                  <input
                     type="text"
                     placeholder="Seu usuário"
-                    className="h-14 bg-white/5 border-white/10 rounded-2xl pl-4 focus:border-primary/50 transition-all text-lg"
+                    className="flex h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-lg focus:border-primary/50 transition-all focus:outline-none"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
@@ -66,10 +65,10 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Senha</label>
                 <div className="relative">
-                  <Input
+                  <input
                     type="password"
                     placeholder="Sua senha secreta"
-                    className="h-14 bg-white/5 border-white/10 rounded-2xl pl-4 focus:border-primary/50 transition-all text-lg"
+                    className="flex h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-lg focus:border-primary/50 transition-all focus:outline-none"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -77,17 +76,16 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
                 </div>
               </div>
               
-              <Button
+              <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-14 bg-primary text-white hover:bg-primary/90 rounded-2xl transition-all shadow-lg shadow-primary/20 text-lg font-bold group"
+                className="w-full h-14 bg-primary text-white hover:bg-primary/90 rounded-2xl transition-all shadow-lg shadow-primary/20 text-lg font-bold flex items-center justify-center group disabled:opacity-50"
               >
                 {loading ? "Autenticando..." : "Entrar no Sistema"}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              </button>
             </form>
-          </CardContent>
-        </Card>
+        </div>
         
         <p className="mt-8 text-center text-xs text-muted-foreground uppercase tracking-widest opacity-50">
           Versão 2026 • Ambiente Seguro e Local

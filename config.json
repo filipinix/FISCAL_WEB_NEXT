@@ -1,21 +1,12 @@
 {
   "filiais": [
-    {
-      "id": 1,
-      "nome": "Loja Matriz",
-      "api_url": "http://localhost:3001"
-    },
-    {
-      "id": 2,
-      "nome": "Filial Sul",
-      "api_url": "http://localhost:3002"
-    }
+    { "id": 1, "nome": "Matriz Fiscal SP", "api_url": "http://localhost:3000" },
+    { "id": 2, "nome": "Filial Sul Curitiba", "api_url": "http://localhost:3000" }
   ],
   "smtp": {
-    "host": "localhost",
-    "port": 1025,
-    "user": "fiscal@example.com",
-    "pass": "secret"
+    "host": "smtp.fiscalsweb.com",
+    "port": 587,
+    "user": "sistema@fiscalweb.com"
   },
   "export_dir": "./exports"
 }

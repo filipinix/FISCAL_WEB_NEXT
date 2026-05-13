@@ -10,8 +10,10 @@ import Dashboard from "./pages/Dashboard";
 import Filiais from "./pages/Filiais";
 import Relatorios from "./pages/Relatorios";
 import Configuracoes from "./pages/Configuracoes";
+import Faltantes from "./pages/Faltantes";
+import AuditLogs from "./pages/AuditLogs";
 import Sidebar from "./components/Sidebar";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("token");
@@ -69,10 +71,25 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/faltantes"
+              element={
+                <ProtectedRoute>
+                  <Faltantes />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/logs"
+              element={
+                <ProtectedRoute>
+                  <AuditLogs />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
-        <Toaster />
       </div>
     </Router>
   );

@@ -51,11 +51,16 @@ export default function Dashboard() {
     }
   };
 
+  const getCanceladasCount = () => {
+    // Mock logic: 5% of data is canceled for the demo
+    return Math.floor(data.length * 0.05);
+  }
+
   const stats = [
     { label: "Capturadas", value: data.length, icon: FileText, color: "text-blue-500", trend: "+12%" },
-    { label: "Canceladas", value: 2, icon: Ban, color: "text-red-500", trend: "-5%" },
-    { label: "Anomalias", value: 5, icon: AlertTriangle, color: "text-amber-500", trend: "0%" },
-    { label: "Saúde API", value: "98%", icon: Activity, color: "text-emerald-500", trend: "Estável" },
+    { label: "Canceladas", value: getCanceladasCount(), icon: Ban, color: "text-red-500", trend: "-2%" },
+    { label: "Anomalias", value: data.length > 0 ? 3 : 0, icon: AlertTriangle, color: "text-amber-500", trend: "Crítico" },
+    { label: "Saúde API", value: "100%", icon: Activity, color: "text-emerald-500", trend: "Estável" },
   ];
 
   const chartData = data.slice(0, 15).map((d, i) => ({
@@ -74,6 +79,14 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-3">
+          <Button 
+            onClick={() => window.location.href = '/faltantes'}
+            variant="outline" 
+            className="h-12 border-white/5 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-xl px-6 font-bold uppercase tracking-widest text-[10px] gap-2"
+          >
+            <AlertTriangle className="w-4 h-4" />
+            Audit Sequencial
+          </Button>
           <div className="flex flex-col">
             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1 ml-1">Unidade de Controle</span>
             <Select value={selectedFilial} onValueChange={setSelectedFilial}>

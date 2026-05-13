@@ -32,5 +32,9 @@ Recriação moderna do sistema Fiscal Web, focado em performance, design técnic
 - Identificação proativa de quebras de sequência numérica.
 - Controle de status das APIs de cada unidade.
 
+## Documentação Adicional
+- [Documentação Técnica Completa](./DOCUMENTACAO.md) - Detalhes sobre regras de negócio, infraestrutura e melhorias.
+- [Visão Geral do Projeto](./PROJECT_OVERVIEW.md) - Guia rápido para desenvolvedores e arquitetura.
+
 ---
 © 2026 Fiscal Solution Systems - Versão 1.0.0

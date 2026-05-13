@@ -1,12 +1,14 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Store, FileText, Settings, LogOut, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Store, FileText, Settings, LogOut, ShieldCheck, ClipboardList, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: Store, label: "Filiais", path: "/filiais" },
+  { icon: Store, label: "Unidades", path: "/filiais" },
   { icon: FileText, label: "Relatórios", path: "/relatorios" },
-  { icon: Settings, label: "Configurações", path: "/config" },
+  { icon: AlertTriangle, label: "Faltantes", path: "/faltantes" },
+  { icon: ClipboardList, label: "Audit Log", path: "/logs" },
+  { icon: Settings, label: "Ajustes", path: "/config" },
 ];
 
 export default function Sidebar() {
